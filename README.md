@@ -4,6 +4,14 @@ TALIST - To-Accomplish List
 
 I deeply appreciate the work that the team at Trello is doing, but I got tired of using a web app and decided to make a very simple CLI app to replace Trello.
 
+NOTES:
+This is the alpha version. It doesn't work so great, but it's serviceable.
+There is a problem I can't solve with Nim/sqlite3 not being able to call
+a database file without an absolute path or a "relative path" where the
+path starts from the root directory of app. To solve this, a variable
+called `home` has been added to talist.nim which you should edit to match
+your path to the desired db file.
+
 TO-DO:
 - Make DB network-based if at all possible
 - Either print out known Boards or print all Boards at once

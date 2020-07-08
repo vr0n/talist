@@ -10,7 +10,9 @@ There is a problem I can't solve with Nim/sqlite3 not being able to call
 a database file without an absolute path or a "relative path" where the
 path starts from the root directory of app. To solve this, a variable
 called `home` has been added to talist.nim which you should edit to match
-your path to the desired db file.
+your path to the app root directory. Once you've done this, you can just
+alias `talist` to the full path of the compiled binary to avoid the db
+error. I am open to any suggestions on how to solve this.
 
 TO-DO:
 - Make DB network-based if at all possible
@@ -32,14 +34,14 @@ One of my issues with Trello was a lack of keyboard support for basic features a
 an inability to discover basic features (such as delete). 
 
 Everything should be straightforward here: the middle keyboard row is where all of
-your most basic commands lie -- 'a' to add an item, 'd' to delete, 'h'/'l' to cycle.
+your most basic commands lie -- `a` to add an item, `d` to delete, `h`/`l` to cycle.
 
-You can also edit/delete Boards with 'n' for "new" or 'x' to delete.
+You can also edit/delete Boards with `n` for "new" or `x` to delete.
 
-You can move Items from one board to another with 'm' for "move". And, you can seek
-further help by typing "?".
+You can move Items from one board to another with `m` for "move". And, you can seek
+further help by typing `?`.
 
 Requirements:
 Currently, this only works with shown nimble requirements and on Linux. This is 
-because I manually call `os.execShellCmd` which needs a linux terminal emulator
-which basic GNU tools to operate. 
+because I manually call `os.execShellCmd` which needs a Linux terminal emulator
+with basic GNU tools to operate. 

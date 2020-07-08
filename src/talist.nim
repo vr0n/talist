@@ -202,7 +202,7 @@ proc main() =
 
   while true:
     discard os.execShellCmd("clear -x")
-    echo "\nhelp: h/l-Switch Board; a-Add To Board; d-Delete From Board; q/Q-Quit;  ?-Help\n"
+    echo "\nhelp: h/l-Switch Board; a-Add To Board; d-Delete From Board; q/Q-Quit; ?-Help\n"
     printBox(lists[index][0])
 
     let input = getch()

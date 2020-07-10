@@ -81,11 +81,13 @@ proc editMode(prompt: Prompt, val: int) =
 # Function to delete item
 proc delItem(prompt: Prompt) =
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
-  echo "\nEnter the number of the item you want to delete:"
-  var input = getch()
-  if isInt($input):
-    var regVal = parseInt($input)
+  echo "\nEnter the number of the item you want to delete (or 'xx' to cancel):"
+  var input = prompt.readLine()
+  if isInt(input):
+    var regVal = parseInt(input)
     db.exec(sql"DELETE FROM items WHERE name = (?) AND label = (?)", items[int(regVal)][0], lists[index][0])
+  elif input == "xx":
+    return
   else:
     echo "\nValue must be an integer..."
 
@@ -111,13 +113,12 @@ proc editBoards(prompt: Prompt, entry: char) =
 proc moveItem(prompt: Prompt) =
   var inc = 0
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
-  echo "\nEnter the number of the item you want to move:"
+  echo "\nEnter the number of the item you want to move (or 'xx' to cancel):"
 
-  var input = getch()
-  echo input
+  var input = prompt.readLine()
 
-  if isInt($input):
-    var intVal =  parseInt($input)
+  if isInt(input):
+    var intVal =  parseInt(input)
     echo "\nWhich Board would you like to move this Item to:"
     for i in lists:
       echo alph[inc] & ". " & i[0]
@@ -129,6 +130,8 @@ proc moveItem(prompt: Prompt) =
     if val != -1:
       db.exec(sql"UPDATE items SET label = ? WHERE name = ?", lists[val][0], items[intVal][0])
     lists = db.getAllRows(sql"SELECT name FROM lists")
+  elif input == "xx":
+    return
   else:
     echo "\nValue must be an integer...".fgRed
 

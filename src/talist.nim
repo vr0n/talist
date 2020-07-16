@@ -70,10 +70,10 @@ proc editMode(prompt: Prompt, val: int) =
   var newVal = val
   var current = items[newVal][0]
 
-  echo "\nEnter the updated Item or 'xx' to cancel:"
+  echo "\nEnter the updated Item or 'Enter' to cancel:"
   let new = prompt.readLine()
 
-  if new == "xx":
+  if new == "":
     return
 
   db.exec(sql"UPDATE items SET name = ? WHERE name = ?", new, current) 
@@ -81,12 +81,12 @@ proc editMode(prompt: Prompt, val: int) =
 # Function to delete item
 proc delItem(prompt: Prompt) =
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
-  echo "\nEnter the number of the item you want to delete (or 'xx' to cancel):"
+  echo "\nEnter the number of the item you want to delete (or 'Enter' to cancel):"
   var input = prompt.readLine()
   if isInt(input):
     var regVal = parseInt(input)
     db.exec(sql"DELETE FROM items WHERE name = (?) AND label = (?)", items[int(regVal)][0], lists[index][0])
-  elif input == "xx":
+  elif input == "":
     return
   else:
     echo "\nValue must be an integer..."
@@ -113,7 +113,7 @@ proc editBoards(prompt: Prompt, entry: char) =
 proc moveItem(prompt: Prompt) =
   var inc = 0
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
-  echo "\nEnter the number of the item you want to move (or 'xx' to cancel):"
+  echo "\nEnter the number of the item you want to move (or 'Enter' to cancel):"
 
   var input = prompt.readLine()
 
@@ -130,10 +130,21 @@ proc moveItem(prompt: Prompt) =
     if val != -1:
       db.exec(sql"UPDATE items SET label = ? WHERE name = ?", lists[val][0], items[intVal][0])
     lists = db.getAllRows(sql"SELECT name FROM lists")
-  elif input == "xx":
+  elif input == "":
     return
   else:
     echo "\nValue must be an integer...".fgRed
+
+# Function to change the order of Boards
+proc changeBoards(prompt: Prompt) = 
+  var inc = 0
+  echo "\nWhich Board would you like to move this Item to:"
+  for i in lists:
+    echo alph[inc] & ". " & i[0]
+    inc(inc)
+
+  var board = prompt.readLine()
+  var val = find(alph, board)
 
 # Function to define help menu
 proc printHelp() = 
@@ -192,6 +203,8 @@ proc readEntry(prompt: Prompt, entry: char): int =
     if isInt(i):
       editMode(prompt, parseInt(i))
     return 0 
+  elif entry == 'c':
+    changeBoards(prompt)
   elif entry == '?':
     printHelp()
     return 0

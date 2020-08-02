@@ -97,6 +97,9 @@ proc editBoards(prompt: Prompt, entry: char) =
     echo "\nEnter the name of the new board:"
     let input = prompt.readLine()
 
+    if input == "":
+      return
+
     db.exec(sql"INSERT INTO lists (name) VALUES (?)", input)
     lists = db.getAllRows(sql"SELECT name FROM lists")
   else:

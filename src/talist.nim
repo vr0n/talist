@@ -10,9 +10,8 @@ let db_check = fileExists(home & "db/talist.db")
 if not db_check:
   let db = open(home & "db/talist.db", "", "", "") 
 
-  db.exec(sql"CREATE TABLE items ( id INTEGER PRIMARY KEY, name VARCHAR(500) NOT NULL , label VARCHAR(100) NOT NULL )")
+  db.exec(sql"CREATE TABLE items ( id INTEGER PRIMARY KEY, name VARCHAR(500) NOT NULL , label VARCHAR(100) NOT NULL, due_date CHECK (date(due_date) IS NOT NULL )")
   db.exec(sql"CREATE TABLE lists ( name VARCHAR(100) NOT NULL )")
-  db.exec(sql"CREATE TABLE due_dates ( date real NOT NULL )")
 
   db.exec(sql"INSERT INTO lists (name) VALUES (?)", "To-Do")
   db.exec(sql"INSERT INTO lists (name) VALUES (?)", "To-Do Today")
@@ -112,6 +111,38 @@ proc editBoards(prompt: Prompt, entry: char) =
         index = index - 1
       lists = db.getAllRows(sql"SELECT name FROM lists")
 
+# Function to add or remove boards
+proc dateMode(prompt: Prompt, entry: char) =
+  var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
+
+  if entry == 'W':
+    discard os.execShellCmd("clear -x")
+    var due = db.getAllRows(sql"SELECT * FROM items WHERE due_date != (?) ORDER BY due_date ASC", "")
+
+    for i in due:
+      echo "DUE: ".bold.fgBlue & i[3].bold.fgGreen & " -- ".fgYellow & i[1].bold.fgBlue
+
+    var input = getch()
+    
+    return
+  else:
+    echo "\nEnter the number of the item you want to add a due date to (or 'Enter' to cancel):"
+    var input = prompt.readLine()
+    if isInt(input):
+      var regVal = parseInt(input)
+
+      echo "\nEnter the date this item is due in MM/DD/YYYY format:"
+
+      var dueDate = prompt.readLine()
+
+      db.exec(sql"UPDATE items SET due_date = ? WHERE name = ?", dueDate, items[regVal][0]) 
+
+      return
+    elif input == "":
+      return
+    else:
+      echo "\nValue must be an integer..."
+
 # Function to move an Item to a different Board
 proc moveItem(prompt: Prompt) =
   var inc = 0
@@ -185,6 +216,9 @@ proc readEntry(prompt: Prompt, entry: char): int =
     return 0
   elif entry == 'n' or entry == 'x':
     editBoards(prompt, entry)
+    return 0
+  elif entry == 'w' or entry == 'W':
+    dateMode(prompt, entry)
     return 0
   elif entry == 'q' or entry == 'Q':
     if entry == 'q':

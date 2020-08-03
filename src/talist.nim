@@ -25,6 +25,13 @@ let db = open(home & "db/talist.db", "", "", "")
 # grab the "lists" from the db file
 var lists = db.getAllRows(sql"SELECT name FROM lists")
 
+# views val
+# 0 - default view
+# 1 - due date view
+# more to come...
+var view = 0
+let viewMax = 1
+
 # this shoud come in handy
 var index = 0
 var inc = 0
@@ -50,10 +57,17 @@ proc printBox(name: string) =
 
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
 
-  for i in items:
-    echo line
-    echo $inc & ". "  & i[0].bold.fgBlue
-    inc(inc)
+  if view == 0:
+    for i in items:
+      echo line
+      echo $inc & ". "  & i[0].bold.fgBlue
+      inc(inc)
+  elif view == 1:
+    for i in items:
+      var dates = db.getAllRows(sql"SELECT due_date FROM items WHERE label=(?)", lists[index][0])
+      echo line
+      echo $inc & ". " & dates[0][0].bold.fgGreen & " -- " & i[0].bold.fgBlue
+      inc(inc)
 
   echo line
 
@@ -118,7 +132,9 @@ proc dateMode(prompt: Prompt, entry: char) =
 
   if entry == 'W':
     discard os.execShellCmd("clear -x")
-    var due = db.getAllRows(sql"SELECT * FROM items WHERE due_date != (?) ORDER BY due_date ASC", "")
+    echo "Items Due:\n"
+
+    var due = db.getAllRows(sql"SELECT * FROM items WHERE due_date != (?) AND label != ? ORDER BY due_date ASC", "", "Done")
 
     for i in due:
       echo "DUE: ".bold.fgBlue & i[3].bold.fgGreen & " -- ".fgYellow & i[1].bold.fgBlue
@@ -246,6 +262,7 @@ proc printHelp() =
   echo "This program operates around the idea of Boards and Items;"
   echo "Boards are To-Do Lists that hold Items"
   echo "\nh/l: Switch Board"
+  echo "j/k: Switch view"
   echo "a: Add Item To Board"
   echo "d: Delete Item From Board"
   echo "m: Move Item To Different Board"
@@ -255,7 +272,9 @@ proc printHelp() =
   echo "w: Add a Due Date to an Item"
   echo "W: View your Items by Due Date"
   echo "b: Board view -- prints all boards in their current order"
-  echo "Press any key to continue..."
+  echo "c: Change Board order"
+  echo "?: Print this very menu..."
+  echo "\nPress any key to continue..."
   let exitVal = getch()
 
 proc readEntry(prompt: Prompt, entry: char): int = 
@@ -267,6 +286,16 @@ proc readEntry(prompt: Prompt, entry: char): int =
     if index != len(lists) - 1:
       index = index + 1
     return 0
+  elif entry == 'k':
+    if view != viewMax:
+      inc(view)
+    else:
+      view = view
+  elif entry == 'j':
+    if view != 0:
+      view = view - 1
+    else:
+      view = view
   elif entry == 'a':
     addItem(prompt)
     return 0

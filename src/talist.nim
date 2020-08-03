@@ -252,7 +252,9 @@ proc changeBoards(prompt: Prompt) =
   db.exec(sql"UPDATE lists SET rowid = 0 WHERE rowid = ?", val1)
   db.exec(sql"UPDATE lists SET rowid = ? WHERE rowid = ?", val1, val2)
   db.exec(sql"UPDATE lists SET rowid = ? WHERE rowid = 0", val2)
- 
+
+  lists = db.getAllRows(sql"SELECT name FROM lists")
+
   return
 
 # Function to define help menu

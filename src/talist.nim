@@ -66,7 +66,7 @@ proc printBox(name: string) =
     for i in items:
       var dates = db.getAllRows(sql"SELECT due_date FROM items WHERE label=(?)", lists[index][0])
       echo line
-      echo $inc & ". " & dates[0][0].bold.fgGreen & " -- " & i[0].bold.fgBlue
+      echo $inc & ". " & dates[inc][0].bold.fgGreen & " -- " & i[0].bold.fgBlue
       inc(inc)
 
   echo line

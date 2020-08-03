@@ -17,6 +17,9 @@ Version 1.0.0 Updates:
 Due Dates are now implemented. You can now add due dates to your items
 and view all of our items (regardless of board) in due date order.
 
+Views are now implemented. There are currently only two views available:
+Default and Due Date view. You can use `j`/`k` to switch between them.
+
 If an item does not have a due date, it will not be included in the list
 of items that have due dates.
 

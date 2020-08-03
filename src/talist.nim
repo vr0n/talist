@@ -27,6 +27,7 @@ var lists = db.getAllRows(sql"SELECT name FROM lists")
 
 # this shoud come in handy
 var index = 0
+var inc = 0
 
 # define isInt to validate integer
 proc isInt(value: string): bool = 
@@ -41,7 +42,7 @@ proc isInt(value: string): bool =
 
 # print out the thing we see
 proc printBox(name: string) =
-  var ind = 0
+  inc = 0
   var line = "-----------------------".fgYellow
   echo line
   echo name.bold.fgGreen
@@ -51,8 +52,8 @@ proc printBox(name: string) =
 
   for i in items:
     echo line
-    echo $ind & ". "  & i[0].bold.fgBlue
-    ind = ind + 1
+    echo $inc & ". "  & i[0].bold.fgBlue
+    inc(inc)
 
   echo line
 
@@ -145,7 +146,7 @@ proc dateMode(prompt: Prompt, entry: char) =
 
 # Function to move an Item to a different Board
 proc moveItem(prompt: Prompt) =
-  var inc = 0
+  inc = 0
   var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
   echo "\nEnter the number of the item you want to move (or 'Enter' to cancel):"
 
@@ -169,23 +170,81 @@ proc moveItem(prompt: Prompt) =
   else:
     echo "\nValue must be an integer...".fgRed
 
-# Function to change the order of Boards
-proc changeBoards(prompt: Prompt) = 
-  var inc = 0
-  echo "\nWhich Board would you like to move this Item to:"
+# Function to print current boards
+proc boardView() = 
+  discard os.execShellCmd("clear -x")
+
+  echo "Board View: Press any key to exit"
+
+  var line = "-----------------------".fgYellow
+  inc = 0
+  var lists = db.getAllRows(sql"SELECT * FROM lists")
+
+  echo line
+  echo "Boards".bold.fgGreen
+  echo line
+
   for i in lists:
-    echo alph[inc] & ". " & i[0]
+    echo line
+    echo alph[inc] & ". " & i[0].bold.fgBlue
     inc(inc)
 
+  echo line
+  var cont = getch()
+
+  return
+
+# Function to change the order of Boards
+proc changeBoards(prompt: Prompt) = 
+  discard os.execShellCmd("clear -x")
+  lists = db.getAllRows(sql"SELECT * FROM lists")
+  inc = 0
+
+  var line = "-----------------------".fgYellow
+
+  echo line
+  echo "Boards".bold.fgGreen
+  echo line
+
+  for i in lists:
+    echo line
+    echo alph[inc] & ". " & i[0].bold.fgBlue
+    inc(inc)
+
+  echo line
+
+  echo "\nWhich is the first Board you would like to switch?"
+
   var board = prompt.readLine()
-  var val = find(alph, board)
+
+  if board == "":
+    return
+
+  var val1 = int(find(alph, board)) + 1
+
+  echo "\nWhich is the second Board you would like to switch?"
+  board = prompt.readLine()
+
+  if board == "":
+    return
+
+  var val2 = int(find(alph, board)) + 1
+
+  if val1 == val2:
+    return
+
+  db.exec(sql"UPDATE lists SET rowid = 0 WHERE rowid = ?", val1)
+  db.exec(sql"UPDATE lists SET rowid = ? WHERE rowid = ?", val1, val2)
+  db.exec(sql"UPDATE lists SET rowid = ? WHERE rowid = 0", val2)
+ 
+  return
 
 # Function to define help menu
 proc printHelp() = 
   discard os.execShellCmd("clear -x")
   echo "\ntalist - To-Accomplish List"
-  echo "This program operates around Boards and Items;"
-  echo "Boards are To-Do Lists that Hold Items"
+  echo "This program operates around the idea of Boards and Items;"
+  echo "Boards are To-Do Lists that hold Items"
   echo "\nh/l: Switch Board"
   echo "a: Add Item To Board"
   echo "d: Delete Item From Board"
@@ -193,6 +252,9 @@ proc printHelp() =
   echo "n: Create New Board"
   echo "x: Delete Current Board (requires confirmation)"
   echo "e: Edit Item On Board. You Can Bypass This Command By Just Entering The Corresponding Item Number"
+  echo "w: Add a Due Date to an Item"
+  echo "W: View your Items by Due Date"
+  echo "b: Board view -- prints all boards in their current order"
   echo "Press any key to continue..."
   let exitVal = getch()
 
@@ -242,6 +304,8 @@ proc readEntry(prompt: Prompt, entry: char): int =
     return 0 
   elif entry == 'c':
     changeBoards(prompt)
+  elif entry == 'b':
+    boardView()
   elif entry == '?':
     printHelp()
     return 0

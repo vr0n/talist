@@ -22,7 +22,7 @@ of items that have due dates.
 
 TO-DO:
 - Make DB network-based if at all possible
-- Either print out known Boards or print all Boards at once
+[x] Either print out known Boards or print all Boards at once
 
 Talist v1.0.0
 

@@ -15,6 +15,8 @@ of items that have due dates.
 ### TO-DO:
 - Make DB network-based if at all possible
 
+- Add "timer" feature to Items, so you can track how long it takes to accomplish tasks
+
 ### Talist v1.0.0
 
 To-Accomplish Lists Separated Into Boards.

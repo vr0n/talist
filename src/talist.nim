@@ -285,7 +285,7 @@ proc printHelp() =
   echo "n: Create New Board"
   echo "x: Delete Current Board (requires confirmation)"
   echo "e: Edit Item On Board. You Can Bypass This Command By Just Entering The Corresponding Item Number"
-  echo "w: Add a Due Date to an Item"
+  echo "w: Add a Due Date to an Item (must be in YYYY-MM-DD format)"
   echo "W: View your Items by Due Date"
   echo "b: Board view -- prints all boards in their current order"
   echo "c: Change Board order"

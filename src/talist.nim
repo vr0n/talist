@@ -10,14 +10,20 @@ let db_check = fileExists(home & "db/talist.db")
 if not db_check:
   let db = open(home & "db/talist.db", "", "", "") 
 
-  db.exec(sql"CREATE TABLE items ( id INTEGER PRIMARY KEY, name VARCHAR(500) NOT NULL , label VARCHAR(100) NOT NULL, due_date CHECK (date(due_date) IS NOT NULL )")
-  db.exec(sql"CREATE TABLE lists ( name VARCHAR(100) NOT NULL )")
+  db.exec(sql"""CREATE TABLE items (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(500) NOT NULL,
+    label VARCHAR(100) NOT NULL,
+    due_date CHECK (due_date IS NULL OR date(due_date) IS NOT NULL)
+  )""")
+
+  db.exec(sql"""CREATE TABLE lists (
+    name VARCHAR(100) NOT NULL
+  )""")
 
   db.exec(sql"INSERT INTO lists (name) VALUES (?)", "To-Do")
   db.exec(sql"INSERT INTO lists (name) VALUES (?)", "To-Do Today")
   db.exec(sql"INSERT INTO lists (name) VALUES (?)", "Done")
-
-  db.close()
 
 # grab the file that should exist
 let db = open(home & "db/talist.db", "", "", "")
@@ -148,7 +154,7 @@ proc dateMode(prompt: Prompt, entry: char) =
     if isInt(input):
       var regVal = parseInt(input)
 
-      echo "\nEnter the date this item is due in MM/DD/YYYY format:"
+      echo "\nEnter the date this item is due in YYYY-MM-DD format:"
 
       var dueDate = prompt.readLine()
 

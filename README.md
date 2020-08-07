@@ -15,8 +15,6 @@ of items that have due dates.
 ### TO-DO:
 - Make DB network-based if at all possible
 
-- Add "timer" feature to Items, so you can track how long it takes to accomplish tasks
-
 ### Talist v1.0.0
 
 To-Accomplish Lists Separated Into Boards.
@@ -42,3 +40,5 @@ Requirements:
 Currently, this only works with shown nimble requirements and on Linux. This is 
 because I manually call `os.execShellCmd` which needs a Linux terminal emulator
 with basic GNU tools to operate. 
+
+sshhhh -- there is a new 'secret' ability to time your Items as you accomplish them (e.g., start timer when you start Item and then see how long it took once it is marked as finished).

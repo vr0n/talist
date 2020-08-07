@@ -1,41 +1,27 @@
-(I haven't felt like formatting this README yet)
-
-TALIST - To-Accomplish List
+# TALIST - To-Accomplish List
 
 I deeply appreciate the work that the team at Trello is doing, but I got tired of using a web app and decided to make a very simple CLI app to replace Trello.
 
-NOTES:
-There is a problem I can't solve with Nim/sqlite3 not being able to call
-a database file without an absolute path or a "relative path" where the
-path starts from the root directory of app. To solve this, a variable
-called `home` has been added to talist.nim which you should edit to match
-your path to the app root directory. Once you've done this, you can just
-alias `talist` to the full path of the compiled binary to avoid the db
-error. I am open to any suggestions on how to solve this.
-
-Version 1.0.0 Updates:
-Due Dates are now implemented. You can now add due dates to your items
+### Version 1.0.0 Updates:
+* Due Dates are now implemented. You can now add due dates to your items
 and view all of our items (regardless of board) in due date order.
 
-Views are now implemented. There are currently only two views available:
+* Views are now implemented. There are currently only two views available:
 Default and Due Date view. You can use `j`/`k` to switch between them.
 
-If an item does not have a due date, it will not be included in the list
+* If an item does not have a due date, it will not be included in the list
 of items that have due dates.
 
-TO-DO:
+### TO-DO:
 - Make DB network-based if at all possible
-[x] Either print out known Boards or print all Boards at once
 
-Talist v1.0.0
+### Talist v1.0.0
 
 To-Accomplish Lists Separated Into Boards.
 
 To Install:
-You will have to set the `home` variable in `src/talist.nim` before installing.
-Once this is done, just cd into the `talist` directory and run `nimble c src/talist.nim`
+I haven't written the installer yet, so it is recommended that you run this from a new directory called ~/.talist (though, you can run it from wherever you want, as long as talist can find the database file). To install, just cd into the `talist` directory and run `nimble c src/talist.nim`
 
-Features:
 This program focuses around the ideas of Items and Boards. Boards hold Items and Items
 make up our "To-Do" list. Boards are basically the categories you put your Items in.
 

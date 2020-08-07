@@ -154,7 +154,7 @@ proc dateMode(prompt: Prompt, entry: char) =
     if isInt(input):
       var regVal = parseInt(input)
 
-      echo "\nEnter the date this item is due in YYYY-MM-DD format:"
+      echo "\nEnter the date this item is due in MM/DD/YYYY format:"
 
       var dueDate = prompt.readLine()
 

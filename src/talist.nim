@@ -14,7 +14,9 @@ if not db_check:
     id INTEGER PRIMARY KEY,
     name VARCHAR(500) NOT NULL,
     label VARCHAR(100) NOT NULL,
-    due_date CHECK (due_date IS NULL OR date(due_date) IS NOT NULL)
+    due_date CHECK (due_date IS NULL OR date(due_date) IS NOT NULL),
+    start_time INTEGER,
+    comp_time INTEGER
   )""")
 
   db.exec(sql"""CREATE TABLE lists (
@@ -53,6 +55,17 @@ proc isInt(value: string): bool =
 
   return val
 
+# Convert seconds to hours and minutes
+proc timeConv(secs: int): string = 
+  var hours = secs / 3600
+  var sec = secs %% 3600
+
+  var mins = secs / 60
+  sec = sec %% 60
+
+  var output = $hours.int() & " hrs, " & $mins.int() & " mins, " & $sec.int() & " secs"
+  return output
+
 # print out the thing we see
 proc printBox(name: string) =
   inc = 0
@@ -71,9 +84,22 @@ proc printBox(name: string) =
   elif view == 1:
     for i in items:
       var dates = db.getAllRows(sql"SELECT due_date FROM items WHERE label=(?)", lists[index][0])
-      echo line
-      echo $inc & ". " & dates[inc][0].bold.fgGreen & " -- " & i[0].bold.fgBlue
-      inc(inc)
+      var start_times = db.getAllRows(sql"SELECT start_time FROM items WHERE label=(?)", lists[index][0])
+      var comp_times = db.getAllRows(sql"SELECT comp_time FROM items WHERE label=(?)", lists[index][0])
+
+      if start_times[inc][0] != "" and comp_times[inc][0] == "": 
+        echo line
+        echo $inc & ". " & dates[inc][0].bold.fgGreen & " -- " & i[0].bold.fgBlue & " -- " & "Timer Started".bold.fgRed
+        inc(inc)
+      elif comp_times[inc][0] != "":
+        var total = timeConv(parseInt(comp_times[inc][0]))
+        echo line
+        echo $inc & ". " & dates[inc][0].bold.fgGreen & " -- " & i[0].bold.fgBlue & " -- " & total.bold.fgRed
+        inc(inc)
+      else:
+        echo line
+        echo $inc & ". " & dates[inc][0].bold.fgGreen & " -- " & i[0].bold.fgBlue
+        inc(inc)
 
   echo line
 
@@ -271,6 +297,34 @@ proc changeBoards(prompt: Prompt) =
 
   return
 
+# Function to add timer to Items
+proc timer(prompt: Prompt) = 
+  echo "\nEnter the number you would like to start/stop timing (or 'Enter' to cancel):"
+  var input = prompt.readLine()
+
+  if input == "":
+    return
+
+  var items = db.getAllRows(sql"SELECT name FROM items WHERE label=(?)", lists[index][0])
+  
+  if isInt(input):
+    var regVal = parseInt(input)
+
+    var now = epochTime().int()
+
+    var time = db.getAllRows(sql"SELECT start_time FROM items WHERE name = ?", items[regVal][0]) 
+
+    if time[0][0] == "":
+      echo "you are here"
+      discard os.execShellCmd("sleep 30")
+      db.exec(sql"UPDATE items SET start_time = ? WHERE name = ?", now, items[regVal][0])
+    else:
+      var curTime = parseInt(time[0][0])
+      now = epochTime().int()
+      var sec = now - curTime
+      echo sec
+      db.exec(sql"UPDATE items SET comp_time = ? WHERE name = ?", sec, items[regVal][0])
+
 # Function to define help menu
 proc printHelp() = 
   discard os.execShellCmd("clear -x")
@@ -289,6 +343,7 @@ proc printHelp() =
   echo "W: View your Items by Due Date"
   echo "b: Board view -- prints all boards in their current order"
   echo "c: Change Board order"
+  echo "s: start/stop to time items. If the timer is not started, 's' starts it. If it has been started, 's' stops it."
   echo "?: Print this very menu..."
   echo "\nPress any key to continue..."
   let exitVal = getch()
@@ -326,6 +381,9 @@ proc readEntry(prompt: Prompt, entry: char): int =
     return 0
   elif entry == 'w' or entry == 'W':
     dateMode(prompt, entry)
+    return 0
+  elif entry == 's':
+    timer(prompt)
     return 0
   elif entry == 'q' or entry == 'Q':
     if entry == 'q':

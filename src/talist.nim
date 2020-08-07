@@ -1,7 +1,7 @@
-from os import fileExists
+from os import fileExists, getHomeDir
 import db_sqlite, prompt, strutils, colorize, terminal
 
-const home = "/home/vr0n/.config/talist/src/"
+const home = getHomeDir() & ".config/talist/src/"
 const alph = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"]
 
 let db_check = fileExists(home & "db/talist.db")

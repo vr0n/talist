@@ -158,12 +158,13 @@ proc dateMode(prompt: Prompt, entry: char) =
 
       var dueDate = prompt.readLine()
 
-      try:
-        discard parse(dueDate, "MM/dd/yyyy")
-      except:
-        echo "\nDate format incorrect!"
-        discard os.execShellCmd("sleep 1")
-        return
+      if dueDate != "":
+        try:
+          discard parse(dueDate, "MM/dd/yyyy")
+        except:
+          echo "\nDate format incorrect!"
+          discard os.execShellCmd("sleep 1")
+          return
 
       db.exec(sql"UPDATE items SET due_date = ? WHERE name = ?", dueDate, items[regVal][0]) 
 

@@ -315,14 +315,11 @@ proc timer(prompt: Prompt) =
     var time = db.getAllRows(sql"SELECT start_time FROM items WHERE name = ?", items[regVal][0]) 
 
     if time[0][0] == "":
-      echo "you are here"
-      discard os.execShellCmd("sleep 30")
       db.exec(sql"UPDATE items SET start_time = ? WHERE name = ?", now, items[regVal][0])
     else:
       var curTime = parseInt(time[0][0])
       now = epochTime().int()
       var sec = now - curTime
-      echo sec
       db.exec(sql"UPDATE items SET comp_time = ? WHERE name = ?", sec, items[regVal][0])
 
 # Function to define help menu

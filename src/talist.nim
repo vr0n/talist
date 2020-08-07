@@ -1,5 +1,5 @@
 from os import fileExists, getHomeDir
-import db_sqlite, prompt, strutils, colorize, terminal
+import db_sqlite, prompt, strutils, colorize, terminal, times
 
 const home = getHomeDir() & ".config/talist/src/"
 const alph = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P"]
@@ -157,6 +157,13 @@ proc dateMode(prompt: Prompt, entry: char) =
       echo "\nEnter the date this item is due in MM/DD/YYYY format:"
 
       var dueDate = prompt.readLine()
+
+      try:
+        discard parse(dueDate, "MM/dd/yyyy")
+      except:
+        echo "\nDate format incorrect!"
+        discard os.execShellCmd("sleep 1")
+        return
 
       db.exec(sql"UPDATE items SET due_date = ? WHERE name = ?", dueDate, items[regVal][0]) 
 

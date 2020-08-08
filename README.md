@@ -10,7 +10,12 @@ and view all of our items (regardless of board) in due date order.
 Default and Due Date view. You can use `j`/`k` to switch between them.
 
 * If an item does not have a due date, it will not be included in the list
-of items that have due dates.
+of items that have due dates. If an Item with a due date is in the `Done`
+List, it will not be inlcluded in the list of items that have due dates.
+
+* Massive error handling/bug fix updates.
+
+* Time your tasks. Put a timer on your tasks to track how long they take
 
 ### TO-DO:
 - Make DB network-based if at all possible
@@ -42,5 +47,3 @@ Requirements:
 Currently, this only works with shown nimble requirements and on Linux. This is 
 because I manually call `os.execShellCmd` which needs a Linux terminal emulator
 with basic GNU tools to operate. 
-
-sshhhh -- there is a new 'secret' ability to time your Items as you accomplish them (e.g., start timer when you start Item and then see how long it took once it is marked as finished).

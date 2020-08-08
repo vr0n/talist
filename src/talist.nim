@@ -314,13 +314,31 @@ proc timer(prompt: Prompt) =
 
     var time = db.getAllRows(sql"SELECT start_time FROM items WHERE name = ?", items[regVal][0]) 
 
+    var comp = db.getAllRows(sql"SELECT comp_time FROM items WHERE name = ?", items[regVal][0]) 
+
     if time[0][0] == "":
       db.exec(sql"UPDATE items SET start_time = ? WHERE name = ?", now, items[regVal][0])
-    else:
+    elif comp[0][0] == "":
       var curTime = parseInt(time[0][0])
       now = epochTime().int()
       var sec = now - curTime
       db.exec(sql"UPDATE items SET comp_time = ? WHERE name = ?", sec, items[regVal][0])
+    else:
+      echo "\nThis Item has already been timed..."
+      echo "Would you like to [r]eset the timer or [e]rase the current time ['r'/'e']?"
+
+      input = prompt.readLine()
+
+      if input == "r":
+        now = epochTime().int()
+
+        db.exec(sql"UPDATE items SET start_time = ? WHERE name = ?", now, items[regVal][0])
+        db.exec(sql"UPDATE items SET comp_time = ? WHERE name = ?", "", items[regVal][0])
+      elif input == "e":
+        db.exec(sql"UPDATE items SET start_time = ? WHERE name = ?", "", items[regVal][0])
+        db.exec(sql"UPDATE items SET comp_time = ? WHERE name = ?", "", items[regVal][0])
+
+      return
 
 # Function to define help menu
 proc printHelp() = 

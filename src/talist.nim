@@ -192,7 +192,7 @@ proc dateMode(prompt: Prompt, entry: char) =
           discard os.execShellCmd("sleep 1")
           return
 
-      db.exec(sql"UPDATE items SET due_date = ? WHERE name = ?", dueDate, items[regVal][0]) 
+        db.exec(sql"UPDATE items SET due_date = ? WHERE name = ?", dueDate, items[regVal][0]) 
 
       return
     elif input == "":

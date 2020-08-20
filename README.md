@@ -20,6 +20,8 @@ List, it will not be inlcluded in the list of items that have due dates.
 ### TO-DO:
 - Make DB network-based if at all possible
 
+- Switch DB to postgreSQL
+
 - Use 'canvas' like system (like `gdb` tui or `r2` graphs) to actually draw appropriate lines instead of just using a default line length to separate Items
 
 ### Talist v1.0.0
